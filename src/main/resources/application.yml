@@ -1,0 +1,49 @@
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    connection-timeout: 300s
+    keep-alive-timeout: 300s
+    max-http-form-post-size: 10MB
+
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: DeepResearch
+  mvc:
+    async:
+      request-timeout: 300s
+
+research:
+  llmProvider: ${RESEARCH_LLM_PROVIDER:inception}
+  modelName: ${RESEARCH_MODEL_NAME:mercury-coder}
+  baseUrl: ${RESEARCH_BASE_URL:https://api:inceptionlabs.ai/v1}
+  apiKey: ${RESEARCH_API_KEY:}
+  useToolCalling: false
+  maxWebResearchLoops: ${MAX_RESEARCH_LOOPS:3}
+  searchApi: ${SEARCH_API:duckduckgo}
+  fetchFullPage: false
+  stripThinkingTokens: true
+  maxTokensPerSource: ${MAX_TOKENS:1000}
+
+logging:
+  level:
+    com.example: DEBUG
+    org.springframework.web: DEBUG
+    dev.langchain4j: DEBUG
+    org.apache.http: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Search Service Configuration
+search:
+  tavily:
+    api:
+      key: ""  # Leave empty or add your Tavily API key here
+  perplexity:
+    api:
+      key: ""  # Leave empty or add your Perplexity API key here
