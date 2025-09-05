@@ -9,11 +9,17 @@ class ResearchApp {
         this.resultContainer = document.getElementById('resultContainer');
         this.spinner = document.getElementById('spinner');
         this.btnText = document.getElementById('btnText');
-
+        this.reportActions = document.getElementById('reportActions');
+        this.copyReportBtn = document.getElementById('copyReportBtn');
+        this.downloadReportBtn = document.getElementById('downloadReportBtn');
+        this.rawMarkdown = '';
         this.initializeMarked();
         this.bindEvents();
         this.setupUI();
     }
+    
+
+    
 
     initializeMarked() {
         marked.setOptions({
@@ -31,6 +37,9 @@ class ResearchApp {
     setupUI() {
         this.statusDiv.style.display = 'none';
         this.resultContainer.style.display = 'none';
+        if (this.reportActions) {
+            this.reportActions.classList.add('hidden');
+        }
     }
 
     bindEvents() {
@@ -45,6 +54,14 @@ class ResearchApp {
                 this.runResearch();
             }
         });
+        
+        // Report action buttons
+        if (this.copyReportBtn) {
+            this.copyReportBtn.addEventListener('click', () => this.copyReport());
+        }
+        if (this.downloadReportBtn) {
+            this.downloadReportBtn.addEventListener('click', () => this.downloadReport());
+        }
     }
 
     showLoading() {
@@ -98,10 +115,20 @@ class ResearchApp {
             this.resultContainer.style.display = 'block';
             this.resultContainer.classList.add('fade-in');
             this.addCopyButtons();
+            // Store raw markdown for copy/download actions
+            this.rawMarkdown = content;
+            // Show report action buttons
+            if (this.reportActions) {
+                this.reportActions.classList.remove('hidden');
+            }
         } catch (error) {
             console.error('Error rendering markdown:', error);
             this.resultDiv.innerHTML = `<pre>${content}</pre>`;
             this.resultContainer.style.display = 'block';
+            this.rawMarkdown = content;
+            if (this.reportActions) {
+                this.reportActions.classList.remove('hidden');
+            }
         }
     }
 
@@ -203,7 +230,43 @@ class ResearchApp {
         this.resultDiv.innerHTML = '';
         this.resultContainer.style.display = 'none';
         this.statusDiv.style.display = 'none';
+        if (this.reportActions) {
+            this.reportActions.classList.add('hidden');
+        }
         this.topicInput.focus();
+    }
+
+    copyReport() {
+        if (!this.rawMarkdown) {
+            this.showError('No report to copy');
+            return;
+        }
+        navigator.clipboard.writeText(this.rawMarkdown).then(() => {
+            if (this.copyReportBtn) {
+                const original = this.copyReportBtn.textContent;
+                this.copyReportBtn.textContent = 'Copied!';
+                setTimeout(() => this.copyReportBtn.textContent = original, 2000);
+            }
+        }).catch(err => {
+            console.error('Copy failed', err);
+            this.showError('Failed to copy report');
+        });
+    }
+
+    downloadReport() {
+        if (!this.rawMarkdown) {
+            this.showError('No report to download');
+            return;
+        }
+        const blob = new Blob([this.rawMarkdown], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'research_report.md';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 }
 
@@ -238,46 +301,3 @@ function clearResults() {
 window.runResearch = runResearch;
 window.clearResults = clearResults;
 
-// Enhanced error handling for the legacy version
-document.addEventListener('DOMContentLoaded', () => {
-    const topicInput = document.getElementById('topic');
-    const runBtn = document.getElementById('runBtn');
-    const statusDiv = document.getElementById('status');
-    const resultDiv = document.getElementById('result');
-
-    runBtn.addEventListener('click', async () => {
-        const topic = topicInput.value.trim();
-        
-        if (!topic) {
-            statusDiv.textContent = 'Please enter a topic';
-            return;
-        }
-
-        // Show loading state
-        statusDiv.textContent = 'Researching...';
-        runBtn.disabled = true;
-        resultDiv.innerHTML = '';
-
-        try {
-            const response = await fetch('/api/research/conduct', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic })
-            });
-
-            const data = await response.json();
-            
-            if (data.error) {
-                statusDiv.textContent = 'Error: ' + data.error;
-            } else {
-                statusDiv.textContent = '';
-                const html = marked.parse(data.summary);
-                resultDiv.innerHTML = html;
-            }
-        } catch (error) {
-            statusDiv.textContent = 'Error: ' + error.message;
-        } finally {
-            runBtn.disabled = false;
-        }
-    });
-});

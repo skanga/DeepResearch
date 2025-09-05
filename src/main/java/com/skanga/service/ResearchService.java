@@ -9,6 +9,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,7 +28,15 @@ public class ResearchService {
     private final SearchService searchService;
     private final ResearchConfiguration config;
 
+    @Autowired
     public ResearchService(SearchService searchService, ResearchConfiguration config) {
+        this(searchService, config, null, null, null);
+    }
+
+    // Constructor for testing
+    public ResearchService(SearchService searchService, ResearchConfiguration config,
+                           QueryGeneratorService queryGenerator, SummarizerService summarizer,
+                           ReflectionService reflectionService) {
         this.searchService = searchService;
         this.config = config;
 
@@ -35,21 +44,26 @@ public class ResearchService {
         logger.info("Configuration - Provider: {}, Model: {}, Base URL: {}",
                 config.getLlmProvider(), config.getModelName(), config.getBaseUrl());
 
-        // Initialize LangChain4J services
-        ChatModel chatModel = createChatModel();
+        if (queryGenerator != null && summarizer != null && reflectionService != null) {
+            this.queryGenerator = queryGenerator;
+            this.summarizer = summarizer;
+            this.reflectionService = reflectionService;
+        } else {
+            // Initialize LangChain4J services
+            ChatModel chatModel = createChatModel();
 
-        this.queryGenerator = AiServices.builder(QueryGeneratorService.class)
-                .chatModel(chatModel)
-                .build();
+            this.queryGenerator = AiServices.builder(QueryGeneratorService.class)
+                    .chatModel(chatModel)
+                    .build();
 
-        this.summarizer = AiServices.builder(SummarizerService.class)
-                .chatModel(chatModel)
-                .build();
+            this.summarizer = AiServices.builder(SummarizerService.class)
+                    .chatModel(chatModel)
+                    .build();
 
-        this.reflectionService = AiServices.builder(ReflectionService.class)
-                .chatModel(chatModel)
-                .build();
-
+            this.reflectionService = AiServices.builder(ReflectionService.class)
+                    .chatModel(chatModel)
+                    .build();
+        }
         logger.info("=== ResearchService: LangChain4J services initialized successfully ===");
     }
 

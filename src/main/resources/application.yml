@@ -20,7 +20,7 @@ spring:
 research:
   llmProvider: ${RESEARCH_LLM_PROVIDER:inception}
   modelName: ${RESEARCH_MODEL_NAME:mercury-coder}
-  baseUrl: ${RESEARCH_BASE_URL:https://api:inceptionlabs.ai/v1}
+  baseUrl: ${RESEARCH_BASE_URL:https://api.inceptionlabs.ai/v1}
   apiKey: ${RESEARCH_API_KEY:}
   useToolCalling: false
   maxWebResearchLoops: ${MAX_RESEARCH_LOOPS:3}
@@ -28,6 +28,9 @@ research:
   fetchFullPage: false
   stripThinkingTokens: true
   maxTokensPerSource: ${MAX_TOKENS:1000}
+  tavilyApiKey: ${TAVILY_API_KEY:}
+  perplexityApiKey: ${PERPLEXITY_API_KEY:}
+  searxngUrl: ${SEARXNG_URL:http://localhost:8888}
 
 logging:
   level:

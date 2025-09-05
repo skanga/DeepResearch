@@ -7,9 +7,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Component
 @ConfigurationProperties(prefix = "research")
 public class ResearchConfiguration {
-    private String llmProvider = "ollama";
-    private String modelName = "llama3.1";
-    private String baseUrl = "http://localhost:11434"; // renamed from ollamaBaseUrl, defaults to Ollama
+    private String llmProvider = "inception";
+    private String modelName = "mercury-coder";
+    private String baseUrl = "https://api.inceptionlabs.ai/v1";
     private boolean useToolCalling = false;
     private int maxWebResearchLoops = 3;
     private String searchApi = "duckduckgo";
@@ -21,10 +21,14 @@ public class ResearchConfiguration {
     private String project = "";
     private String location = "";
 
+    // Search API keys
+    private String tavilyApiKey = "";
+    private String perplexityApiKey = "";
+    private String searxngUrl = "http://localhost:8888";
+
     // Getters and setters
     public String getLlmProvider() {
-        String envProvider = System.getenv("RESEARCH_LLM_PROVIDER");
-        return envProvider != null ? envProvider : llmProvider;
+        return llmProvider;
     }
 
     public void setLlmProvider(String llmProvider) {
@@ -32,8 +36,7 @@ public class ResearchConfiguration {
     }
 
     public String getModelName() {
-        String envModel = System.getenv("RESEARCH_MODEL_NAME");
-        return envModel != null ? envModel : modelName;
+        return modelName;
     }
 
     public void setModelName(String modelName) {
@@ -41,8 +44,7 @@ public class ResearchConfiguration {
     }
 
     public String getBaseUrl() {
-        String envUrl = System.getenv("RESEARCH_BASE_URL");
-        return envUrl != null ? envUrl : baseUrl;
+        return baseUrl;
     }
 
     public void setBaseUrl(String baseUrl) {
@@ -50,10 +52,6 @@ public class ResearchConfiguration {
     }
 
     public String getApiKey() {
-        String envKey = System.getenv("RESEARCH_API_KEY");
-        if (envKey != null && !envKey.isEmpty()) {
-            return envKey;
-        }
         return apiKey;
     }
 
@@ -62,8 +60,7 @@ public class ResearchConfiguration {
     }
 
     public String getProject() {
-        String envProject = System.getenv("RESEARCH_PROJECT");
-        return envProject != null ? envProject : project;
+        return project;
     }
 
     public void setProject(String project) {
@@ -71,8 +68,7 @@ public class ResearchConfiguration {
     }
 
     public String getLocation() {
-        String envLocation = System.getenv("RESEARCH_LOCATION");
-        return envLocation != null ? envLocation : location;
+        return location;
     }
 
     public void setLocation(String location) {
@@ -125,6 +121,30 @@ public class ResearchConfiguration {
 
     public void setMaxTokensPerSource(int maxTokensPerSource) {
         this.maxTokensPerSource = maxTokensPerSource;
+    }
+
+    public String getTavilyApiKey() {
+        return tavilyApiKey;
+    }
+
+    public void setTavilyApiKey(String tavilyApiKey) {
+        this.tavilyApiKey = tavilyApiKey;
+    }
+
+    public String getPerplexityApiKey() {
+        return perplexityApiKey;
+    }
+
+    public void setPerplexityApiKey(String perplexityApiKey) {
+        this.perplexityApiKey = perplexityApiKey;
+    }
+
+    public String getSearxngUrl() {
+        return searxngUrl;
+    }
+
+    public void setSearxngUrl(String searxngUrl) {
+        this.searxngUrl = searxngUrl;
     }
 }
 

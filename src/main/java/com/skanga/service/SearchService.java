@@ -40,11 +40,16 @@ public class SearchService {
     private String perplexityApiKey;
 
     public SearchService() {
-        logger.info("=== SearchService: Initializing JDK HttpClient ===");
-        this.httpClient = HttpClient.newBuilder()
+        this(HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .followRedirects(HttpClient.Redirect.NORMAL)
-                .build();
+                .build());
+    }
+
+    // Constructor for testing
+    public SearchService(HttpClient httpClient) {
+        logger.info("=== SearchService: Initializing JDK HttpClient ===");
+        this.httpClient = httpClient;
         this.objectMapper = new ObjectMapper();
         logger.info("=== SearchService: JDK HttpClient initialized ===");
     }

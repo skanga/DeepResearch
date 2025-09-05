@@ -18,9 +18,14 @@ public class WebContentFetcher {
     private final HttpClient httpClient;
     
     public WebContentFetcher() {
-        this.httpClient = HttpClient.newBuilder()
+        this(HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
-                .build();
+                .build());
+    }
+
+    // Constructor for testing
+    public WebContentFetcher(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
     
     /**
