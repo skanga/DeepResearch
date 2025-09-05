@@ -18,8 +18,6 @@ public class ResearchConfiguration {
     private int maxTokensPerSource = 1000;
 
     private String apiKey = "";
-    private String project = "";
-    private String location = "";
 
     // Search API keys
     private String tavilyApiKey = "";
@@ -59,21 +57,7 @@ public class ResearchConfiguration {
         this.apiKey = apiKey;
     }
 
-    public String getProject() {
-        return project;
-    }
-
-    public void setProject(String project) {
-        this.project = project;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
+    
 
     public boolean isUseToolCalling() {
         return useToolCalling;
