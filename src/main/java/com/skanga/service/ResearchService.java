@@ -277,9 +277,9 @@ public class ResearchService {
 
         // Deduplicate sources
         Set<String> uniqueSources = new LinkedHashSet<>(state.getSourcesGathered());
-        String allSources = String.join("\n", uniqueSources);
+        String allSources = String.join("\n- ", uniqueSources);
 
-        String finalSummary = String.format("## Summary\n%s\n\n### Sources:\n%s\n\n### Metadata:\n%s\n",
+        String finalSummary = String.format("## Summary\n%s\n\n### Sources:\n- %s\n\n### Metadata:\n%s\n",
                 state.getRunningSummary(), allSources, state.getMetadata().toString());
 
         logger.debug("Final summary prepared with {} unique sources", uniqueSources.size());
